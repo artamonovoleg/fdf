@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kaygalle/CLionProjects/sfml/Vectors.hpp
+ostream
+-
+sstream
+-
+fstream
+-
+cassert
+-
+
+/home/kaygalle/CLionProjects/sfml/main.cpp
+iostream
+-
+cmath
+-
+memory
+-
+SFML/Graphics.hpp
+-
+Vectors.hpp
+/home/kaygalle/CLionProjects/sfml/Vectors.hpp
+

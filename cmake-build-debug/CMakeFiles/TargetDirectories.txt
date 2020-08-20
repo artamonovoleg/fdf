@@ -1,0 +1,3 @@
+/home/kaygalle/CLionProjects/sfml/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/kaygalle/CLionProjects/sfml/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/kaygalle/CLionProjects/sfml/cmake-build-debug/CMakeFiles/sfml.dir
