@@ -18,6 +18,32 @@ class Camera
         int scale = 0;
     public:
         Camera(vec2i position, vec3f rotation, int scale) : position(position), rotation(rotation), scale(scale) {};
+
+        void updateCameraVectors()
+        {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+                position.x -= 1;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+                position.x += 1;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+                position.y -= 1;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                position.y += 1;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
+                rotation.y -= 0.1f;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
+                rotation.y += 0.1f;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
+                rotation.x += 0.1f;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+                rotation.x -= 0.1f;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Dash))
+                scale -= 1;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Equal))
+                scale += 1;
+        };
 };
 
 class Transform
@@ -71,40 +97,6 @@ class Transform
         }
 };
 
-class Controller
-{
-    private:
-        sf::RenderWindow &_window;
-        Camera &_camera;
-    public:
-        Controller(sf::RenderWindow &window, Camera &camera) : _window(window), _camera(camera) {};
-        void handleInput()
-        {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-                _camera.position.x -= 1;
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-                _camera.position.x += 1;
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-                _camera.position.y -= 1;
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-                _camera.position.y += 1;
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
-                _camera.rotation.y -= 0.1f;
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
-                _camera.rotation.y += 0.1f;
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
-                _camera.rotation.x += 0.1f;
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
-                _camera.rotation.x -= 0.1f;
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Dash))
-                _camera.scale -= 1;
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Equal))
-                _camera.scale += 1;
-        }
-};
-
 class Surface
 {
     private:
@@ -129,7 +121,7 @@ class Surface
             }
         }
 
-        inline void drawLine(point p0, point p1) const
+        void drawLine(point p0, point p1) const
         {
             int x, y, xe, ye;
             int x1 = p0.pos.x;
@@ -224,19 +216,11 @@ class Surface
             }
         }
 
-        inline void clear() const
+        void clear() const
         {
             for (int i = 0; i < _width * _height * 4; i++)
             {
-                data[i] = 0;
-            }
-        }
-
-        inline void clear(sf::Color color) const
-        {
-            for (int i = 0; i < _width * _height; i++)
-            {
-                //((sf::Uint32 *)data.get())[i] = color.toInteger();
+                data[i] = sf::Uint8 (0);
             }
         }
 
@@ -355,28 +339,28 @@ class Gui
     public:
         sf::Text text;
         std::unique_ptr<point[]> data;
-        int _width = 0;
-        int _height = 0;
+        int width = 0;
+        int height = 0;
     public:
         Gui(sf::Window &window, sf::Font &font)
         {
             text = sf::Text("How to use: \nMove: A, S, W, D \nRotate: I, J, K, L", font, 15);
-            text.setPosition(window.getSize().x / 100 * 85, window.getSize().y / 100 * 5);
+            text.setPosition(float(window.getSize().x) / 100 * 80, float(window.getSize().y) / 100 * 5);
 
-            _width = window.getSize().x / 100 * 23;
-            _height = window.getSize().y;
-            data = std::unique_ptr<point[]>(new point [_width * _height]);
+            width = int(window.getSize().x / 100 * 23);
+            height = window.getSize().y;
+            data = std::unique_ptr<point[]>(new point [width * height]);
 
             int window_width = window.getSize().x;
 
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < _width; x++)
+                for (int x = 0; x < width; x++)
                 {
                     point p;
                     p.pos = vec3i (window_width - x, y, 0);
                     p.color = gui_color;
-                    data [x + y * _width] = p;
+                    data [x + y * width] = p;
                 }
             }
         }
@@ -387,90 +371,114 @@ class Renderer
     private:
         sf::RenderWindow &_window;
         Camera &_camera;
-        sf::Texture texture;
-        sf::Sprite sprite;
-    public:
-        Surface surface;
-
-        Renderer(sf::RenderWindow &window, Camera &camera) : _window(window), _camera(camera), surface(window.getSize().x, window.getSize().y){};
-};
-
-void drawMap(Surface &_surface, Camera &_camera, Map &map)
-{
-    for (int y = 0; y < map.height; y++)
-    {
-        for (int x = 1; x < map.width; x++)
+        Surface _surface;
+        sf::Texture _texture;
+        sf::Sprite _sprite;
+    private:
+        void drawMap(Map &map)
         {
-            if ((x) % map.width != 0)
+            for (int y = 0; y < map.height; y++)
             {
-                point p1;
-                p1.pos.x = x - 1;
-                p1.pos.y = y;
-                p1.pos.z = map.data[(x - 1) + y * map.width].pos.z;
-                p1.color = map.data[(x - 1) + y * map.width].color;
+                for (int x = 1; x < map.width; x++)
+                {
+                    if ((x) % map.width != 0)
+                    {
+                        point p1;
+                        p1.pos.x = x - 1;
+                        p1.pos.y = y;
+                        p1.pos.z = map.data[(x - 1) + y * map.width].pos.z;
+                        p1.color = map.data[(x - 1) + y * map.width].color;
 
-                point p2;
-                p2.pos.x = x;
-                p2.pos.y = y;
-                p2.pos.z = map.data[x + y * map.width].pos.z;
-                p2.color = map.data[x + y * map.width].color;
+                        point p2;
+                        p2.pos.x = x;
+                        p2.pos.y = y;
+                        p2.pos.z = map.data[x + y * map.width].pos.z;
+                        p2.color = map.data[x + y * map.width].color;
 
-                p1.pos = Transform::scaleVector(_camera, p1.pos);
-                p1.pos = p1.pos - vec3i(map.width / 2 * _camera.scale, map.height / 2 * _camera.scale, 0);
-                p1.pos = Transform::rotateVector(_camera, p1.pos);
-                p1.pos = Transform::translateVector(_camera, p1.pos);
+                        p1.pos = Transform::scaleVector(_camera, p1.pos);
+                        p1.pos = p1.pos - vec3i(map.width / 2 * _camera.scale, map.height / 2 * _camera.scale, 0);
+                        p1.pos = Transform::rotateVector(_camera, p1.pos);
+                        p1.pos = Transform::translateVector(_camera, p1.pos);
 
-                p2.pos = Transform::scaleVector(_camera, p2.pos);
-                p2.pos = p2.pos - vec3i(map.width / 2 * _camera.scale, map.height / 2 * _camera.scale, 0);
-                p2.pos = Transform::rotateVector(_camera, p2.pos);
-                p2.pos = Transform::translateVector(_camera, p2.pos);
+                        p2.pos = Transform::scaleVector(_camera, p2.pos);
+                        p2.pos = p2.pos - vec3i(map.width / 2 * _camera.scale, map.height / 2 * _camera.scale, 0);
+                        p2.pos = Transform::rotateVector(_camera, p2.pos);
+                        p2.pos = Transform::translateVector(_camera, p2.pos);
 
-                _surface.drawLine(p1, p2);
+                        _surface.drawLine(p1, p2);
+                    }
+                }
+            }
+
+            for (int y = 1; y < map.height; y++)
+            {
+                for (int x = 0; x < map.width; x++)
+                {
+                    point p1;
+                    p1.pos.x = x;
+                    p1.pos.y = y - 1;
+                    p1.pos.z = map.data[x + (y - 1) * map.width].pos.z;
+                    p1.color = map.data[x + (y - 1) * map.width].color;
+
+                    point p2;
+                    p2.pos.x = x;
+                    p2.pos.y = y;
+                    p2.pos.z = map.data[x + y * map.width].pos.z;
+                    p2.color = map.data[x + y * map.width].color;
+
+                    p1.pos = Transform::scaleVector(_camera, p1.pos);
+                    p1.pos = p1.pos - vec3i(map.width / 2 * _camera.scale, map.height / 2 * _camera.scale, 0);
+                    p1.pos = Transform::rotateVector(_camera, p1.pos);
+                    p1.pos = Transform::translateVector(_camera, p1.pos);
+
+                    p2.pos = Transform::scaleVector(_camera, p2.pos);
+                    p2.pos = p2.pos - vec3i(map.width / 2 * _camera.scale, map.height / 2 * _camera.scale, 0);
+                    p2.pos = Transform::rotateVector(_camera, p2.pos);
+                    p2.pos = Transform::translateVector(_camera, p2.pos);
+                    _surface.drawLine(p1, p2);
+                }
             }
         }
-    }
-
-    for (int y = 1; y < map.height; y++)
-    {
-        for (int x = 0; x < map.width; x++)
+        void drawGui(Gui &gui)
         {
-            point p1;
-            p1.pos.x = x;
-            p1.pos.y = y - 1;
-            p1.pos.z = map.data[x + (y - 1) * map.width].pos.z;
-            p1.color = map.data[x + (y - 1) * map.width].color;
-
-            point p2;
-            p2.pos.x = x;
-            p2.pos.y = y;
-            p2.pos.z = map.data[x + y * map.width].pos.z;
-            p2.color = map.data[x + y * map.width].color;
-
-            p1.pos = Transform::scaleVector(_camera, p1.pos);
-            p1.pos = p1.pos - vec3i(map.width / 2 * _camera.scale, map.height / 2 * _camera.scale, 0);
-            p1.pos = Transform::rotateVector(_camera, p1.pos);
-            p1.pos = Transform::translateVector(_camera, p1.pos);
-
-            p2.pos = Transform::scaleVector(_camera, p2.pos);
-            p2.pos = p2.pos - vec3i(map.width / 2 * _camera.scale, map.height / 2 * _camera.scale, 0);
-            p2.pos = Transform::rotateVector(_camera, p2.pos);
-            p2.pos = Transform::translateVector(_camera, p2.pos);
-            _surface.drawLine(p1, p2);
+            for (int i = 0; i < gui.width * gui.height; i++)
+            {
+                _surface.drawPoint(gui.data[i]);
+            }
         }
-    }
-}
-void drawGui(Gui &gui, Surface &_surface)
-{
-    for (int i = 0; i < gui._width * gui._height; i++)
-    {
-        _surface.drawPoint(gui.data[i]);
-    }
-}
+    public:
+        Renderer(sf::RenderWindow &window, Camera &camera) : _window(window), _camera(camera), _surface(window.getSize().x, window.getSize().y)
+        {
+            _texture.create(window.getSize().x, window.getSize().y);
+            _sprite = sf::Sprite(_texture);
+        };
+
+        void clear()
+        {
+            _window.clear();
+            _surface.clear();
+        }
+
+        void draw(Gui& gui, Map &map)
+        {
+            drawMap(map);
+            drawGui(gui);
+            _texture.update(_surface.getData());
+            _window.draw(_sprite);
+            _window.draw(gui.text);
+        }
+
+        void present()
+        {
+            _window.display();
+        }
+};
+
 
 int main()
 {
-    int width = 960;
-    int height = 540;
+    int width = 800;
+    int height = 600;
     sf::RenderWindow window(sf::VideoMode(width, height), "title");
     window.setPosition(sf::Vector2i(0, 0));
 
@@ -478,21 +486,12 @@ int main()
     if (!font.loadFromFile("./Roboto-Medium.ttf"))
         return EXIT_FAILURE;
 
-    sf::Texture texture;
-    texture.create(width, height);
-    sf::Sprite sprite(texture); // need to draw the texture on screen
-
     Camera camera(vec2i(width / 2, height / 2), vec3f(0, 0, 0), 10);
-    Controller controller(window, camera);
 
-    Surface surface(width, height);
-    Map map("./maps/42.fdf");
-    Gui gui(window, font);
+    Map map("./maps/mars.fdf");
     map.colorize(sf::Color(255, 0, 0, 255), sf::Color(255, 0, 0));
 
-    point test;
-    test.pos = vec3i(40, 40, 0);
-    test.color = sf::Color(0, 255, 0, 255);
+    Gui gui(window, font);
 
     Renderer renderer(window, camera);
 
@@ -506,44 +505,14 @@ int main()
         }
 
         // Controll
-        controller.handleInput();
+        camera.updateCameraVectors();
         //
 
-        window.clear();
-        renderer.surface.clear();
-
-        drawMap(renderer.surface, camera, map);
-        drawGui(gui, renderer.surface);
-        texture.update(renderer.surface.getData());
-        window.draw(sprite);
-        window.draw(gui.text);
-
-        window.display();
+        renderer.clear();
+        renderer.draw(gui, map);
+        renderer.present();
     }
 
 
     return 0;
 }
-
-
-//int main()
-//{
-//    sf::Uint8 array[4];
-//    sf::Color color(1, 2, 3, 4);
-//    array[0] = color.r;
-//    array[1] = color.g;
-//    array[2] = color.b;
-//    array[3] = color.a;
-//    for (int i = 0; i < 4; i++)
-//    {
-//        std::cout << (int)array[i] << std::endl;
-//    }
-//    std::cout << *(sf::Uint32*)array << std::endl << (int)*(sf::Uint8*)array << std::endl;
-//    *(sf::Uint32*)array = int (0x01020304);
-//    std::cout << *(sf::Uint32*)array << std::endl << (int)*(sf::Uint8*)array << std::endl;
-//    for (int i = 0; i < 4; i++)
-//    {
-//        std::cout << (int)array[i] << std::endl;
-//    }
-//
-//}
