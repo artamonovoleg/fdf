@@ -4,30 +4,39 @@
 #include <SFML/Graphics.hpp>
 #include "Vectors.hpp"
 
-int lerp(int start, int end, double percentage)
+class Interpolate
 {
-    return ((int)((1 - percentage) * start + percentage * end));
-}
+    public:
+        static int lerp(int start, int end, double percentage)
+        {
+            return ((int)((1 - percentage) * start + percentage * end));
+        }
 
-float percent(int start, int end, int current)
-{
-    float placement;
-    float distance;
+        static float percent(int start, int end, int current)
+        {
+            float placement;
+            float distance;
 
-    placement = float(current - start);
-    distance = float(end - start);
-    return ((distance == 0) ? 1.0f : (placement / distance));
-}
+            placement = float(current - start);
+            distance = float(end - start);
+            return ((distance == 0) ? 1.0f : (placement / distance));
+        }
 
-sf::Color mix_color(sf::Color color1, sf::Color color2, float percent)
-{
-    sf::Color ret;
-    ret.r = lerp(color1.r, color2.r, percent);
-    ret.g = lerp(color1.g, color2.g, percent);
-    ret.b = lerp(color1.b, color2.b, percent);
-    ret.a = lerp(color1.a, color2.a, percent);
-    return ret;
-}
+        static sf::Color mix_color(sf::Color color1, sf::Color color2, float percent)
+        {
+            sf::Color ret;
+            ret.r = lerp(color1.r, color2.r, percent);
+            ret.g = lerp(color1.g, color2.g, percent);
+            ret.b = lerp(color1.b, color2.b, percent);
+            ret.a = lerp(color1.a, color2.a, percent);
+            return ret;
+        }
+};
+
+
+
+
+
 
 struct point
 {
@@ -177,7 +186,7 @@ class Surface
                 p.pos.x = x;
                 p.pos.y = y;
                 p.color = p0.color;
-                p.color = mix_color(p0.color, p1.color, percent(p0.pos.x, p1.pos.x, p.pos.x));
+                p.color = Interpolate::mix_color(p0.color, p1.color, Interpolate::percent(p0.pos.x, p1.pos.x, p.pos.x));
 
                 drawPoint(p);
                 for (int i = 0; x < xe; i++)
@@ -197,7 +206,7 @@ class Surface
                     p.pos.x = x;
                     p.pos.y = y;
                     p.color = p0.color;
-                    p.color = mix_color(p0.color, p1.color, percent(p0.pos.x, p1.pos.x, p.pos.x));
+                    p.color = Interpolate::mix_color(p0.color, p1.color, Interpolate::percent(p0.pos.x, p1.pos.x, p.pos.x));
 
                     drawPoint(p);
                 }
@@ -219,7 +228,7 @@ class Surface
                 p.pos.x = x;
                 p.pos.y = y;
                 p.color = p0.color;
-                p.color = mix_color(p0.color, p1.color, percent(p0.pos.x, p1.pos.x, p.pos.x));
+                p.color = Interpolate::mix_color(p0.color, p1.color, Interpolate::percent(p0.pos.x, p1.pos.x, p.pos.x));
 
                 drawPoint(p);
                 for (int i = 0; y < ye; i++)
@@ -238,7 +247,7 @@ class Surface
                     p.pos.x = x;
                     p.pos.y = y;
                     p.color = p0.color;
-                    p.color = mix_color(p0.color, p1.color, percent(p0.pos.x, p1.pos.x, p.pos.x));
+                    p.color = Interpolate::mix_color(p0.color, p1.color, Interpolate::percent(p0.pos.x, p1.pos.x, p.pos.x));
 
                     drawPoint(p);
                 }
@@ -355,7 +364,7 @@ class Map
             // Dont ready
             for (int i = 0; i < width * height; i++)
             {
-                data[i].color = mix_color(min_color, max_color, percent(min_depth, max_depth, data[i].pos.z));
+                data[i].color = Interpolate::mix_color(min_color, max_color, Interpolate::percent(min_depth, max_depth, data[i].pos.z));
             }
         }
         ~Map() = default;
@@ -485,7 +494,7 @@ class Renderer
         void clear()
         {
             _window.clear();
-//            _surface.clear();
+            _surface.clear();
         }
 
         void draw(Gui& gui, Map &map)
