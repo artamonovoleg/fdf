@@ -4,6 +4,31 @@
 #include <SFML/Graphics.hpp>
 #include "Vectors.hpp"
 
+int lerp(int start, int end, double percentage)
+{
+    return ((int)((1 - percentage) * start + percentage * end));
+}
+
+float percent(int start, int end, int current)
+{
+    float placement;
+    float distance;
+
+    placement = float(current - start);
+    distance = float(end - start);
+    return ((distance == 0) ? 1.0f : (placement / distance));
+}
+
+sf::Color mix_color(sf::Color color1, sf::Color color2, float percent)
+{
+    sf::Color ret;
+    ret.r = lerp(color1.r, color2.r, percent);
+    ret.g = lerp(color1.g, color2.g, percent);
+    ret.b = lerp(color1.b, color2.b, percent);
+    ret.a = lerp(color1.a, color2.a, percent);
+    return ret;
+}
+
 struct point
 {
     vec3i pos;
@@ -152,6 +177,7 @@ class Surface
                 p.pos.x = x;
                 p.pos.y = y;
                 p.color = p0.color;
+                p.color = mix_color(p0.color, p1.color, percent(p0.pos.x, p1.pos.x, p.pos.x));
 
                 drawPoint(p);
                 for (int i = 0; x < xe; i++)
@@ -171,6 +197,7 @@ class Surface
                     p.pos.x = x;
                     p.pos.y = y;
                     p.color = p0.color;
+                    p.color = mix_color(p0.color, p1.color, percent(p0.pos.x, p1.pos.x, p.pos.x));
 
                     drawPoint(p);
                 }
@@ -192,6 +219,7 @@ class Surface
                 p.pos.x = x;
                 p.pos.y = y;
                 p.color = p0.color;
+                p.color = mix_color(p0.color, p1.color, percent(p0.pos.x, p1.pos.x, p.pos.x));
 
                 drawPoint(p);
                 for (int i = 0; y < ye; i++)
@@ -210,17 +238,18 @@ class Surface
                     p.pos.x = x;
                     p.pos.y = y;
                     p.color = p0.color;
+                    p.color = mix_color(p0.color, p1.color, percent(p0.pos.x, p1.pos.x, p.pos.x));
 
                     drawPoint(p);
                 }
             }
         }
 
-        void clear() const
+        void clear()
         {
             for (int i = 0; i < _width * _height * 4; i++)
             {
-                data[i] = sf::Uint8 (0);
+                data[i] = 0;
             }
         }
 
@@ -326,7 +355,7 @@ class Map
             // Dont ready
             for (int i = 0; i < width * height; i++)
             {
-                data[i].color = min_color;
+                data[i].color = mix_color(min_color, max_color, percent(min_depth, max_depth, data[i].pos.z));
             }
         }
         ~Map() = default;
@@ -474,7 +503,6 @@ class Renderer
         }
 };
 
-
 int main()
 {
     int width = 800;
@@ -488,8 +516,8 @@ int main()
 
     Camera camera(vec2i(width / 2, height / 2), vec3f(0, 0, 0), 10);
 
-    Map map("./maps/mars.fdf");
-    map.colorize(sf::Color(255, 0, 0, 255), sf::Color(255, 0, 0));
+    Map map("./maps/42.fdf");
+    map.colorize(sf::Color(90, 0, 100, 255), sf::Color(255, 255, 255, 255));
 
     Gui gui(window, font);
 
