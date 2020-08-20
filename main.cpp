@@ -248,6 +248,36 @@ class Surface
 class Map
 {
     private:
+        int countWidth(std::string data_file)
+        {
+            /* Count real space between numbers and add 1 at the end to know how much numbers in line */
+
+            int width = 0;
+
+            for (int i = 0; data_file[i] != '\n'; i++ )
+            {
+                if (data_file [i] == ' ' && data_file [i - 1] != ' ')
+                {
+                    width++;
+                }
+            }
+
+            width++;
+
+            return width;
+        }
+        int countHeight(std::string data_file)
+        {
+            int height = 0;
+
+            for (int i = 0; data_file[i] != '\0'; i++)
+            {
+                if (data_file[i] == '\n')
+                    height++;
+            }
+
+            return height;
+        }
     public:
         int width = 0;
         int height = 0;
@@ -278,8 +308,8 @@ class Map
             width = countWidth( data_str );
             height = countHeight( data_str );
 
-            data = std::shared_ptr<point[]> (new point [width * height]);
-
+//            data = std::shared_ptr<point[]> (new point [width * height]);
+            data = std::shared_ptr<point[]>(new point[width * height], std::default_delete<point[]>());
             int count = 0;
             std::stringstream ss;
 
@@ -308,39 +338,6 @@ class Map
                 }
             }
         }
-
-        int countWidth( std::string data_file )
-        {
-            /* Count real space between numbers and add 1 at the end to know how much numbers in line */
-
-            int width = 0;
-
-            for (int i = 0; data_file[i] != '\n'; i++ )
-            {
-                if (data_file [i] == ' ' && data_file [i - 1] != ' ')
-                {
-                    width++;
-                }
-            }
-
-            width++;
-
-            return width;
-        }
-
-        int countHeight( std::string data_file )
-        {
-            int height = 0;
-
-            for (int i = 0; data_file[i] != '\0'; i++)
-            {
-                if (data_file[i] == '\n')
-                    height++;
-            }
-
-            return height;
-        }
-
         void colorize(sf::Color min_color, sf::Color max_color)
         {
             // Dont ready
@@ -349,7 +346,6 @@ class Map
                 data[i].color = min_color;
             }
         }
-
         void draw(Surface &surface)
         {
             for (int y = 0; y < height; y++)
@@ -414,65 +410,59 @@ class Map
                 }
             }
         }
+        ~Map() = default;
 };
 
 
 
 int main()
 {
-    int width = 960;
-    int height = 540;
-    sf::RenderWindow window(sf::VideoMode(width, height), "title");
-    window.setPosition(sf::Vector2i(0, 0));
+//    int width = 960;
+//    int height = 540;
+//    sf::RenderWindow window(sf::VideoMode(width, height), "title");
+//    window.setPosition(sf::Vector2i(0, 0));
+//
+//    sf::Font font;
+//    if (!font.loadFromFile("./Roboto-Medium.ttf"))
+//        return EXIT_FAILURE;
+//    sf::Text howToUse("How to use: \nMove: A, S, W, D \nRotate: I, J, K, L", font, 15);
+//    howToUse.setPosition(width / 100 * 85, height / 100 * 5);
+//
+//    sf::Texture texture;
+//    texture.create(width, height);
+//    sf::Sprite sprite(texture); // need to draw the texture on screen
+//
+//    Camera camera(vec2i(width / 2, height / 2), vec3f(0, 0, 0), 10);
+//    Controller controller(window, camera);
+//
+//    Surface surface(width, height);
+//    Map map("./maps/42.fdf", camera);
+//    map.colorize(sf::Color(255, 0, 0), sf::Color(255, 0, 0));
+//    while (window.isOpen())
+//    {
+//        sf::Event event{};
+//        while (window.pollEvent(event))
+//        {
+//            if (event.type == sf::Event::Closed)
+//                window.close();
+//        }
+//        // Controll
+//        controller.handleInput();
+//        //
+//
+//        window.clear();
+//        surface.clear();
+//        map.draw(surface);
+//        texture.update(surface.getData());
+//        window.draw(sprite);
+//        window.draw(howToUse);
+//
+//        window.display();
+//    }
+    std::unique_ptr<point[]> attempt1 (new point [40]);
+    std::shared_ptr<point[]> attempt2 (new point [40]);
+    std::shared_ptr<point[]> attempt3 (new point [40], std::default_delete<point[]>());
 
-    sf::Font font;
-    if (!font.loadFromFile("./Roboto-Medium.ttf"))
-        return EXIT_FAILURE;
-    sf::Text howToUse("How to use: \nMove: A, S, W, D \nRotate: I, J, K, L", font, 15);
-    howToUse.setPosition(width / 100 * 85, height / 100 * 5);
-
-    sf::Texture texture;
-    texture.create(width, height);
-    sf::Sprite sprite(texture); // need to draw the texture on screen
-
-    Camera camera(vec2i(width / 2, height / 2), vec3f(0, 0, 0), 10);
-    Controller controller(window, camera);
-
-    Surface surface(width, height);
-    Map map("./maps/42.fdf", camera);
-    map.colorize(sf::Color(255, 0, 0), sf::Color(255, 0, 0));
-    while (window.isOpen())
-    {
-        sf::Event event{};
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-        // Controll
-        controller.handleInput();
-        //
-
-        // Simple drawing test
-        point p;
-        p.pos = vec3i (0, 0, 20);
-        p.color = sf::Color (255, 0, 0);
-
-        point p1;
-        p1.pos = vec3i (width, height, 0);
-        p1.color = sf::Color (255, 0, 0);
-        //
-        window.clear();
-        surface.clear();
-        surface.drawPoint(p);
-        surface.drawLine(p, p1);
-        map.draw(surface);
-        texture.update(surface.getData());
-        window.draw(sprite);
-        window.draw(howToUse);
-
-        window.display();
-    }
 
     return 0;
 }
