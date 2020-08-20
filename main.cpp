@@ -110,11 +110,11 @@ class Surface
         int _height = 0;
         sf::Color _bg_color = {0, 0, 0};
     public:
-        std::shared_ptr<sf::Uint8[]> data;
+        std::unique_ptr<sf::Uint8[]> data;
     public:
         Surface(int width, int height) : _width(width), _height(height)
         {
-            data = std::shared_ptr<sf::Uint8[]> (new sf::Uint8 [width * height * 4]);
+            data = std::unique_ptr<sf::Uint8[]> (new sf::Uint8 [width * height * 4]);
         };
 
         void setBGcolor(sf::Color color)
@@ -283,7 +283,7 @@ class Map
         int height = 0;
         int min_depth = 0;
         int max_depth = 0;
-        std::shared_ptr<point[]> data = std::shared_ptr<point[]>(nullptr);
+        std::unique_ptr<point[]> data = std::unique_ptr<point[]>(nullptr);
         Camera &_camera;
     public:
         Map(std::string path, Camera &camera) : _camera(camera)
@@ -308,8 +308,7 @@ class Map
             width = countWidth( data_str );
             height = countHeight( data_str );
 
-//            data = std::shared_ptr<point[]> (new point [width * height]);
-            data = std::shared_ptr<point[]>(new point[width * height], std::default_delete<point[]>());
+            data = std::unique_ptr<point[]>(new point[width * height]);
             int count = 0;
             std::stringstream ss;
 
@@ -413,55 +412,50 @@ class Map
         ~Map() = default;
 };
 
-
-
 int main()
 {
-//    int width = 960;
-//    int height = 540;
-//    sf::RenderWindow window(sf::VideoMode(width, height), "title");
-//    window.setPosition(sf::Vector2i(0, 0));
-//
-//    sf::Font font;
-//    if (!font.loadFromFile("./Roboto-Medium.ttf"))
-//        return EXIT_FAILURE;
-//    sf::Text howToUse("How to use: \nMove: A, S, W, D \nRotate: I, J, K, L", font, 15);
-//    howToUse.setPosition(width / 100 * 85, height / 100 * 5);
-//
-//    sf::Texture texture;
-//    texture.create(width, height);
-//    sf::Sprite sprite(texture); // need to draw the texture on screen
-//
-//    Camera camera(vec2i(width / 2, height / 2), vec3f(0, 0, 0), 10);
-//    Controller controller(window, camera);
-//
-//    Surface surface(width, height);
-//    Map map("./maps/42.fdf", camera);
-//    map.colorize(sf::Color(255, 0, 0), sf::Color(255, 0, 0));
-//    while (window.isOpen())
-//    {
-//        sf::Event event{};
-//        while (window.pollEvent(event))
-//        {
-//            if (event.type == sf::Event::Closed)
-//                window.close();
-//        }
-//        // Controll
-//        controller.handleInput();
-//        //
-//
-//        window.clear();
-//        surface.clear();
-//        map.draw(surface);
-//        texture.update(surface.getData());
-//        window.draw(sprite);
-//        window.draw(howToUse);
-//
-//        window.display();
-//    }
-    std::unique_ptr<point[]> attempt1 (new point [40]);
-    std::shared_ptr<point[]> attempt2 (new point [40]);
-    std::shared_ptr<point[]> attempt3 (new point [40], std::default_delete<point[]>());
+    int width = 960;
+    int height = 540;
+    sf::RenderWindow window(sf::VideoMode(width, height), "title");
+    window.setPosition(sf::Vector2i(0, 0));
+
+    sf::Font font;
+    if (!font.loadFromFile("./Roboto-Medium.ttf"))
+        return EXIT_FAILURE;
+    sf::Text howToUse("How to use: \nMove: A, S, W, D \nRotate: I, J, K, L", font, 15);
+    howToUse.setPosition(width / 100 * 85, height / 100 * 5);
+
+    sf::Texture texture;
+    texture.create(width, height);
+    sf::Sprite sprite(texture); // need to draw the texture on screen
+
+    Camera camera(vec2i(width / 2, height / 2), vec3f(0, 0, 0), 10);
+    Controller controller(window, camera);
+
+    Surface surface(width, height);
+    Map map("./maps/42.fdf", camera);
+    map.colorize(sf::Color(255, 0, 0), sf::Color(255, 0, 0));
+    while (window.isOpen())
+    {
+        sf::Event event{};
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        // Controll
+        controller.handleInput();
+        //
+
+        window.clear();
+        surface.clear();
+        map.draw(surface);
+        texture.update(surface.getData());
+        window.draw(sprite);
+        window.draw(howToUse);
+
+        window.display();
+    }
 
 
     return 0;
