@@ -485,7 +485,7 @@ class Renderer
         void clear()
         {
             _window.clear();
-            _surface.clear();
+//            _surface.clear();
         }
 
         void draw(Gui& gui, Map &map)
