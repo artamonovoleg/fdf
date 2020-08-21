@@ -6,7 +6,7 @@
 
 Gui::Gui(sf::Window &window, sf::Font &font)
 {
-    text = sf::Text("How to use: \nMove: A, S, W, D \nRotate: I, J, K, L", font, 15);
+    text = sf::Text("How to use:\nMove: A, S, W, D\nRotate: I, J, K, L\nChange color: C", font, 16);
     text.setPosition(float(window.getSize().x) / 100 * 79, float(window.getSize().y) / 100 * 5);
 
     width = int(window.getSize().x / 100 * 23);
