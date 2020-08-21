@@ -13,10 +13,8 @@ void Surface::drawPoint(point p) const
 {
     if (p.pos.x >= 0 && p.pos.x < _width && p.pos.y >= 0 && p.pos.y < _height)
     {
-        data[(p.pos.x + p.pos.y * _width) * 4] = p.color.r;
-        data[(p.pos.x + p.pos.y * _width) * 4 + 1] = p.color.g;
-        data[(p.pos.x + p.pos.y * _width) * 4 + 2] = p.color.b;
-        data[(p.pos.x + p.pos.y * _width) * 4 + 3] = p.color.a;
+        sf::Color rev (p.color.a, p.color.b, p.color.g, p.color.r);
+        *(sf::Uint32*) (data.get() + (p.pos.x + p.pos.y * _width) * 4) = rev.toInteger();
     }
 }
 
@@ -121,9 +119,10 @@ void Surface::drawLine(point p0, point p1) const
 
 void Surface::clear() const
 {
-    for (int i = 0; i < _width * _height * 4; i++)
+    sf::Color rev_black(255, 0, 0, 0);
+    for (int i = 0; i < _width * _height * 4; i+=4)
     {
-        data[i] = 0;
+        *(sf::Uint32*) (data.get() + i) = rev_black.toInteger();
     }
 }
 

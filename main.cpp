@@ -12,8 +12,8 @@ int main(int argc, char * argv[])
     if (argc > 1)
     {
         // Create window
-        int width = 1920;
-        int height = 1080;
+        int width = 800;
+        int height = 600;
         sf::RenderWindow window(sf::VideoMode(width, height), "title");
         window.setPosition(sf::Vector2i(0, 0));
 
