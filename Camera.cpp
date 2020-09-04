@@ -9,27 +9,25 @@ Camera::Camera(vec2i position, vec3f rotation, int scale) :
 
 void Camera::updateCameraVectors()
 {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_A))
         position.x -= 1;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_D))
         position.x += 1;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_W))
         position.y -= 1;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_S))
         position.y += 1;
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_J))
         rotation.y -= 0.1f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_L))
         rotation.y += 0.1f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::I))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_I))
         rotation.x += 0.1f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_K))
         rotation.x -= 0.1f;
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Dash))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_MINUS))
         scale -= 1;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Equal))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_EQUALS))
         scale += 1;
 }
 

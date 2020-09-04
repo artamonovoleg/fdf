@@ -2,11 +2,9 @@
 // Created by kaygalle on 21.08.2020.
 //
 
-#ifndef FDF_CAMERA_HPP
-#define FDF_CAMERA_HPP
+#pragma once
 
-#include <SFML/Graphics.hpp>
-#include "Vectors.hpp"
+#include "libsdl.hpp"
 
 class Camera
 {
@@ -20,6 +18,3 @@ class Camera
 
         void updateCameraVectors();
 };
-
-
-#endif //FDF_CAMERA_HPP

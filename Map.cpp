@@ -4,16 +4,6 @@
 
 #include "Map.hpp"
 
-int Map::color_count = 8;
-std::unique_ptr<sf::Color[]> Map::colors = std::unique_ptr<sf::Color[]>(new sf::Color[Map::color_count] {sf::Color(133, 0, 75),
-                                                                                                         sf::Color(255, 255, 255),
-                                                                                                         sf::Color(255, 146, 0),
-                                                                                                         sf::Color(255, 211, 0),
-                                                                                                         sf::Color(18, 64, 171),
-                                                                                                         sf::Color(0, 153, 153),
-                                                                                                         sf::Color(166, 0, 0),
-                                                                                                         sf::Color(255, 120, 0)});
-
 Map::Map(const std::string &path)
 {
     std::ifstream file ( path );
@@ -36,7 +26,7 @@ Map::Map(const std::string &path)
     width = countWidth( data_str );
     height = countHeight( data_str );
 
-    data = std::unique_ptr<point[]>(new point[width * height]);
+    data = std::unique_ptr<Point[]>(new Point[width * height]);
     int count = 0;
     std::stringstream ss;
 
@@ -50,7 +40,7 @@ Map::Map(const std::string &path)
         if (std::stringstream(temp) >> found)
         {
             if (count != width * height)       // LAST SYMBOL IS '\0'
-                data[count].pos.z = found;
+                data[count].position.z = found;
             if (count == 0)
             {
                 max_depth = found;
@@ -100,15 +90,11 @@ int Map::countHeight(std::string data_file)
 
 void Map::colorize()
 {
-    sf::Color min_color = colors[color_set];
-    sf::Color max_color = colors[color_set + 1];
-    // Dont ready
+    Uint32 min_color = 0xFFFFFF;
+    Uint32 max_color = 0xFF0000;
+
     for (int i = 0; i < width * height; i++)
     {
-        data[i].color = Interpolate::mix_color(min_color, max_color, Interpolate::percent(min_depth, max_depth, data[i].pos.z));
+        data[i].color = sdl::Color::mix_color(min_color, max_color, sdl::Color::percent(min_depth, max_depth, data[i].position.z));
     }
-    color_set+=2;
-    if (color_set == color_count)
-        color_set = 0;
 }
-

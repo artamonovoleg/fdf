@@ -1,0 +1,1 @@
+/bin/g++-9  -g   CMakeFiles/fdf.dir/main.cpp.o CMakeFiles/fdf.dir/Map.cpp.o CMakeFiles/fdf.dir/Gui.cpp.o CMakeFiles/fdf.dir/Renderer.cpp.o CMakeFiles/fdf.dir/Camera.cpp.o CMakeFiles/fdf.dir/Transform.cpp.o  -o fdf  -lSDL2 -lSDL2_ttf 
