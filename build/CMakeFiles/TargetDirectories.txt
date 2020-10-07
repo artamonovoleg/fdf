@@ -1,3 +1,0 @@
-/home/user/Documents/C++/fdf/build/CMakeFiles/rebuild_cache.dir
-/home/user/Documents/C++/fdf/build/CMakeFiles/edit_cache.dir
-/home/user/Documents/C++/fdf/build/CMakeFiles/fdf.dir

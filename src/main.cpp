@@ -1,8 +1,8 @@
 #include "libsdl.hpp"
-#include "Camera.hpp"
-#include "Map.hpp"
-#include "Point.hpp"
-#include "Transform.hpp"
+#include "../include/Camera.hpp"
+#include "../include/Map.hpp"
+#include "../include/Point.hpp"
+#include "../include/Transform.hpp"
 
 
 
@@ -96,7 +96,7 @@ int main(int argc, char * argv[])
     sdl::EventHandler::initialize();
 
 
-        Map map("./maps/42.fdf");
+        Map map("./maps/mars.fdf");
         map.colorize();
         Camera camera(vec2i(0, 0), vec3f(0,0,0), 10);
         Renderer renderer(window, camera);

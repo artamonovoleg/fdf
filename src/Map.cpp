@@ -2,7 +2,7 @@
 // Created by kaygalle on 18.08.2020.
 //
 
-#include "Map.hpp"
+#include "../include/Map.hpp"
 
 Map::Map(const std::string &path)
 {
