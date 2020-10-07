@@ -1,32 +1,41 @@
 NAME = fdf
+FLAGS = -g -std=c++11# -Wall -Wextra -Werror
+CC = clang++
 
-CXX = clang++
-FLAGS = -O3 -std=c++11 -Wall -Wextra
+INCLUDES = -I./include -I./libsdl/includes
 
-HEADERS_DIR = ./include
-HEADERS_LIST = Map.hpp Transform.hpp Camera.hpp Point.hpp
-HEADERS = $(patsubst %, $(HEADERS_DIR)/%, $(HEADERS_LIST))
+HEADERS_DIRECTORY = include/
+HEADERS_LIST =
+HEADERS = $(wildcard include/*.h*)
+DIRECTORY =  $(shell pwd)
 
-SRCS_DIR = ./src
-SRCS_LIST = main.cpp Map.cpp Transform.cpp Camera.cpp
-SRCS = $(patsubst %, $(SRCS_DIR)/%, $(SRCS_LIST))
+SRCS_DIRECTORY = ./src/
+SRCS_LIST = main.cpp Camera.cpp Transform.cpp Map.cpp
 
-OBJS_DIR = ./objects
+OBJS_DIRECTORY = objects/
 OBJS_LIST = $(patsubst %.cpp, %.o, $(SRCS_LIST))
-OBJS = $(patsubst %, $(OBJS_DIR)/%, $(OBJS_LIST))
+OBJS = $(addprefix $(OBJS_DIRECTORY), $(OBJS_LIST))
 
-LIBSDL_DIR = ./libsdl
-LIBS = -lSDL2 -lSDL2_ttf `sdl2-config --cflags --libs`
+LIBRARIES = -lSDL2 -lSDL2_ttf `sdl2-config --cflags --libs`
 
-.PHONY: all
+
+.PHONY:
 
 all: $(NAME)
 
-$(NAME): $(OBJS_DIR) $(OBJS)
-	$(CXX) $(FLAGS) $(OBJS) ./libsdl/libsdl.a -I./include -I./libsdl/includes -lSDL2_ttf -lSDL2 -o fdf
 
-$(OBJS_DIR)%.o : $(SRCS_DIR)%.cpp $(HEADERS)
-	@$(CXX) $(FLAGS) -c $< -o $@
+$(NAME): $(OBJS) $(HEADERS)
+	@$(CC) $(FLAGS)  $(INCLUDES) $(OBJS) ./libsdl/libsdl.a -o $(NAME) $(LIBRARIES)
 
-$(OBJS_DIR)%.o : %.cpp $(HEADERS)
-	@$(CC) $(FLAGS) -c $< -o $@
+
+$(OBJS_DIRECTORY):
+	@mkdir -p $(OBJS_DIRECTORY)
+
+
+$(OBJS_DIRECTORY)%.o : $(SRCS_DIRECTORY)%.cpp $(HEADERS)
+	@mkdir -p $(@D)
+	@$(CC) $(FLAGS) -c $(INCLUDES) $< -o $@
+
+$(OBJS_DIRECTORY)%.o : %.cpp $(HEADERS)
+	@mkdir -p $(@D)
+	@$(CC) $(FLAGS) -c $(INCLUDES) $< -o $@
