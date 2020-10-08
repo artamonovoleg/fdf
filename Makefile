@@ -2,40 +2,34 @@ NAME = fdf
 FLAGS = -g -std=c++11# -Wall -Wextra -Werror
 CC = clang++
 
-INCLUDES = -I./include -I./libsdl/includes
+HEADERS_DIR = include/
 
-HEADERS_DIRECTORY = include/
-HEADERS_LIST =
-HEADERS = $(wildcard include/*.h*)
-DIRECTORY =  $(shell pwd)
+SRCS_DIR = src/
+SRCS_LIST = main.cpp Camera.cpp Map.cpp Transform.cpp
+SRCS =  $(addprefix $(SRCS_DIR), $(SRCS_LIST))
 
-SRCS_DIRECTORY = ./src/
-SRCS_LIST = main.cpp Camera.cpp Transform.cpp Map.cpp
-
-OBJS_DIRECTORY = objects/
+OBJS_DIR = objects/
 OBJS_LIST = $(patsubst %.cpp, %.o, $(SRCS_LIST))
-OBJS = $(addprefix $(OBJS_DIRECTORY), $(OBJS_LIST))
+OBJS = $(addprefix $(OBJS_DIR), $(OBJS_LIST))
 
-LIBRARIES = -lSDL2 -lSDL2_ttf `sdl2-config --cflags --libs`
+LIBSDL_DIR = libsdl/
+LIBSDL = $(addprefix $(LIBSDL_DIR), libsdl.a)
 
-
-.PHONY:
+.PHONY: all clean
 
 all: $(NAME)
 
+$(NAME): $(OBJS) $(LIBSDL)
+	$(CC) $(FLAGS) $(OBJS) $(LIBSDL) -I.$(HEADERS_DIR) -lSDL2 -lSDL2_ttf -o $(NAME)
 
-$(NAME): $(OBJS) $(HEADERS)
-	@$(CC) $(FLAGS)  $(INCLUDES) $(OBJS) ./libsdl/libsdl.a -o $(NAME) $(LIBRARIES)
+$(OBJS_DIR):
+	mkdir $(OBJS_DIR)
 
+$(OBJS_DIR)%.o: $(SRCS_DIR)%.cpp $(OBJS_DIR)
+	$(CC) $(FLAGS) -I./$(LIBSDL_DIR)includes -c $< -o $@
 
-$(OBJS_DIRECTORY):
-	@mkdir -p $(OBJS_DIRECTORY)
+$(LIBSDL):
+	make -C $(LIBSDL_DIR)
 
-
-$(OBJS_DIRECTORY)%.o : $(SRCS_DIRECTORY)%.cpp $(HEADERS)
-	@mkdir -p $(@D)
-	@$(CC) $(FLAGS) -c $(INCLUDES) $< -o $@
-
-$(OBJS_DIRECTORY)%.o : %.cpp $(HEADERS)
-	@mkdir -p $(@D)
-	@$(CC) $(FLAGS) -c $(INCLUDES) $< -o $@
+clean:
+	rm -rf $(OBJS_DIR) $(LIBSDL) $(NAME)
