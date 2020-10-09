@@ -13,6 +13,7 @@
 class Map
 {
     private:
+        static int _colors[];
         static int countWidth(std::string data_file);
         static int countHeight(std::string data_file);
     public:
@@ -20,10 +21,10 @@ class Map
         int height = 0;
         int min_depth = 0;
         int max_depth = 0;
-    public:
+
         std::unique_ptr<Point[]> data = std::unique_ptr<Point[]>(nullptr);
         explicit Map(const std::string& path);
         ~Map() = default;
 
-        void colorize();
+        void changeColor();
 };

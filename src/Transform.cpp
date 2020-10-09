@@ -2,7 +2,7 @@
 // Created by kaygalle on 21.08.2020.
 //
 
-#include "../include/Transform.hpp"
+#include "Transform.hpp"
 
 vec3i Transform::scaleVector(Camera &camera, vec3i vec)
 {

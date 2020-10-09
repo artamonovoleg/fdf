@@ -5,7 +5,7 @@ CC = clang++
 HEADERS_DIR = include/
 
 SRCS_DIR = src/
-SRCS_LIST = main.cpp Camera.cpp Map.cpp Transform.cpp
+SRCS_LIST = main.cpp Camera.cpp Map.cpp Transform.cpp Renderer.cpp Gui.cpp Controller.cpp
 SRCS =  $(addprefix $(SRCS_DIR), $(SRCS_LIST))
 
 OBJS_DIR = objects/
@@ -26,7 +26,7 @@ $(OBJS_DIR):
 	mkdir $(OBJS_DIR)
 
 $(OBJS_DIR)%.o: $(SRCS_DIR)%.cpp $(OBJS_DIR)
-	$(CC) $(FLAGS) -I./$(LIBSDL_DIR)includes -c $< -o $@
+	$(CC) $(FLAGS) -I./$(HEADERS_DIR) -I./$(LIBSDL_DIR)includes -c $< -o $@
 
 $(LIBSDL):
 	make -C $(LIBSDL_DIR)

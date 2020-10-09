@@ -2,7 +2,17 @@
 // Created by kaygalle on 18.08.2020.
 //
 
-#include "../include/Map.hpp"
+#include "Map.hpp"
+
+#define COLOR_SETS_COUNT 4
+
+#define WHITE       0xFFFFFF
+#define DISCO		0x9A1F6A
+#define BRICK_RED	0xC2294E
+#define SUN		    0xEF8633
+#define SAFFRON		0xF3AF3D
+
+int Map::_colors[COLOR_SETS_COUNT * 2] = {DISCO, BRICK_RED, WHITE, DISCO, SUN, SAFFRON, DISCO, SUN};
 
 Map::Map(const std::string &path)
 {
@@ -54,6 +64,8 @@ Map::Map(const std::string &path)
             count++;
         }
     }
+
+    changeColor();
 }
 
 int Map::countWidth(std::string data_file)
@@ -88,10 +100,15 @@ int Map::countHeight(std::string data_file)
     return height;
 }
 
-void Map::colorize()
+void Map::changeColor()
 {
-    Uint32 min_color = 0xFFFFFF;
-    Uint32 max_color = 0xFF0000;
+    static int current_set = 0;
+    current_set %= COLOR_SETS_COUNT;
+
+    Uint32 min_color = _colors[current_set * 2];
+    Uint32 max_color = _colors[current_set * 2 + 1];
+
+    current_set += 1;
 
     for (int i = 0; i < width * height; i++)
     {

@@ -15,6 +15,4 @@ class Camera
     public:
         Camera(vec2i position, vec3f rotation, int scale);
         ~Camera() = default;
-
-        void updateCameraVectors();
 };
