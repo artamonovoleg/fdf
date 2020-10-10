@@ -19,13 +19,13 @@ LIBSDL = $(addprefix $(LIBSDL_DIR), libsdl.a)
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LIBSDL)
+$(NAME): $(OBJS_DIR) $(OBJS) $(LIBSDL)
 	$(CC) $(FLAGS) $(OBJS) $(LIBSDL) -I.$(HEADERS_DIR) -lSDL2 -lSDL2_ttf -o $(NAME)
 
 $(OBJS_DIR):
 	mkdir $(OBJS_DIR)
 
-$(OBJS_DIR)%.o: $(SRCS_DIR)%.cpp $(OBJS_DIR)
+$(OBJS_DIR)%.o: $(SRCS_DIR)%.cpp
 	$(CC) $(FLAGS) -I./$(HEADERS_DIR) -I./$(LIBSDL_DIR)includes -c $< -o $@
 
 $(LIBSDL):
