@@ -4,15 +4,17 @@
 
 #include "Map.hpp"
 
-#define COLOR_SETS_COUNT 4
+#define COLOR_SETS_COUNT 5
 
 #define WHITE       0xFFFFFF
 #define DISCO		0x9A1F6A
 #define BRICK_RED	0xC2294E
 #define SUN		    0xEF8633
 #define SAFFRON		0xF3AF3D
+#define DARK_BLUE   0x0643BD
+#define BLUE        0x30A5BF
 
-int Map::_colors[COLOR_SETS_COUNT * 2] = {DISCO, BRICK_RED, WHITE, DISCO, SUN, SAFFRON, DISCO, SUN};
+int Map::_colors[COLOR_SETS_COUNT * 2] = {DISCO, BRICK_RED, WHITE, DISCO, SUN, SAFFRON, DISCO, SUN, DARK_BLUE, BLUE};
 
 Map::Map(const std::string &path)
 {

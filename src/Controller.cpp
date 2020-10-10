@@ -27,10 +27,31 @@ void Controller::camera_control()
         _camera.rotation.x += 0.1f;
     if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_K))
         _camera.rotation.x -= 0.1f;
-    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_MINUS))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_MINUS) || sdl::EventHandler::isScrollingDown())
         _camera.scale -= 1;
-    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_EQUALS))
+    if (sdl::EventHandler::inputGetKey(SDL_SCANCODE_EQUALS) || sdl::EventHandler::isScrollingUp())
         _camera.scale += 1;
+
+    static vec2i old_p;
+    static vec2i new_p;
+
+    old_p = new_p;
+    sdl::EventHandler::getMousePosition(new_p.x, new_p.y);
+
+    if (sdl::EventHandler::inputGetButton(SDL_BUTTON_LEFT))
+    {
+        if (new_p.x > old_p.x)
+            _camera.rotation.y += 0.1;
+        else
+        if (new_p.x < old_p.x)
+            _camera.rotation.y -= 0.1;
+
+        if (new_p.y > old_p.y)
+            _camera.rotation.x -= 0.1;
+        else
+        if (new_p.y < old_p.y)
+            _camera.rotation.x += 0.1;
+    }
 }
 
 void Controller::update()

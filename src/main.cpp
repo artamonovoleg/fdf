@@ -4,10 +4,6 @@
 #include "Map.hpp"
 #include "Gui.hpp"
 #include "Renderer.hpp"
-
-#include "../include/Camera.hpp"
-#include "../include/Map.hpp"
-
 #include "Controller.hpp"
 
 
@@ -24,8 +20,6 @@ int main(int argc, char* argv[])
         std::string folder = "./maps/";
         std::string file = argv[1];
         std::string path = folder + file;
-
-
 
         Camera camera(vec2i(width / 2, height / 2), vec3f(0, 0, 0), 10);
         Renderer renderer(window, camera);
