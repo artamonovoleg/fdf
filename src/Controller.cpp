@@ -40,16 +40,16 @@ void Controller::camera_control()
 
     if (sdl::EventHandler::inputGetButton(SDL_BUTTON_LEFT))
     {
-        if (new_p.x > old_p.x + 3)
+        if (new_p.x > old_p.x)
             _camera.rotation.y += 0.2;
         else
-        if (new_p.x + 3 < old_p.x)
+        if (new_p.x < old_p.x)
             _camera.rotation.y -= 0.2;
 
-        if (new_p.y > old_p.y + 3)
+        if (new_p.y > old_p.y)
             _camera.rotation.x -= 0.2;
         else
-        if (new_p.y  + 3 < old_p.y)
+        if (new_p.y < old_p.y)
             _camera.rotation.x += 0.2;
     }
 }

@@ -1,6 +1,6 @@
 NAME = fdf
 FLAGS = -g -std=c++11# -Wall -Wextra -Werror
-CC = clang++
+CC = g++
 
 HEADERS_DIR = include/
 
