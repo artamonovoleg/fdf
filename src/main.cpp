@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
         int height = 1080;
         sdl::Window window("FDF", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height,
                            SDL_WINDOW_ALLOW_HIGHDPI);
+        // window.setFullscreenMode();
 
         std::string folder = "./maps/";
         std::string file = argv[1];
