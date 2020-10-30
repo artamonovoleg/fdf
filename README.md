@@ -1,4 +1,4 @@
-# Simple warframe renderer writen in C++
+# Simple wireframe renderer writen in C++
 
 ## Some demos
 
